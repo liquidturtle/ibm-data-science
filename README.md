@@ -1,19 +1,26 @@
+from sklearn.metrics import mean_squared_error
+
 # ibm-data-science
+
 Code for IBM Data Science Professional on Coursera
+
 ## Module 2: Data Wrangling
+
 ### Import / Export
-| Title                             | Description                                  | Command                                                                       |
-|-----------------------------------|----------------------------------------------|-------------------------------------------------------------------------------|
-| Read CSV w/o header               | Read CSV file into a DataFrame               | `df = pd.read_csv("file.csv")` or `df = pd.read_csv("file.csv", header=None)` |
-| Read CSV with custom column names | Provide your own column names                | `df = pd.read_csv("file.csv", names=cols_list)`                               |
-| Read Excel                        | Read Excel sheet into a DataFrame            | `df = pd.read_excel("file.xlsx", sheet_name="Sheet1")`                        |
-| Read JSON                         | Read JSON file or URL into a DataFrame       | `df = pd.read_json("file.json")`                                              |
-| Read from SQL                     | Read from SQL database using a query         | `df = pd.read_sql("SELECT * FROM table", conn)`                               |
-| Save to CSV                       | Save DataFrame to a CSV file                 | `df.to_csv("output.csv", index=False)`                                        |
-| Save to Excel                     | Save DataFrame to an Excel file              | `df.to_excel("output.xlsx", index=False)`                                     |
-| Save to SQL                       | Write DataFrame to SQL table                 | `df.to_sql("table_name", conn, if_exists="replace", index=False)`             |
+
+| Title                             | Description                            | Command                                                                       |
+|-----------------------------------|----------------------------------------|-------------------------------------------------------------------------------|
+| Read CSV w/o header               | Read CSV file into a DataFrame         | `df = pd.read_csv("file.csv")` or `df = pd.read_csv("file.csv", header=None)` |
+| Read CSV with custom column names | Provide your own column names          | `df = pd.read_csv("file.csv", names=cols_list)`                               |
+| Read Excel                        | Read Excel sheet into a DataFrame      | `df = pd.read_excel("file.xlsx", sheet_name="Sheet1")`                        |
+| Read JSON                         | Read JSON file or URL into a DataFrame | `df = pd.read_json("file.json")`                                              |
+| Read from SQL                     | Read from SQL database using a query   | `df = pd.read_sql("SELECT * FROM table", conn)`                               |
+| Save to CSV                       | Save DataFrame to a CSV file           | `df.to_csv("output.csv", index=False)`                                        |
+| Save to Excel                     | Save DataFrame to an Excel file        | `df.to_excel("output.xlsx", index=False)`                                     |
+| Save to SQL                       | Write DataFrame to SQL table           | `df.to_sql("table_name", conn, if_exists="replace", index=False)`             |
 
 ### View / Inspect
+
 | Title                | Description                             | Command                      |
 |----------------------|-----------------------------------------|------------------------------|
 | View first rows      | Show first *n* rows (default 5)         | `df.head(n)`                 |
@@ -40,7 +47,6 @@ Code for IBM Data Science Professional on Coursera
 | **Binning**                                    | Create bins for continuous data.                                        | ```bins = np.linspace(min(df['attribute_name']), max(df['attribute_name']), n) # n is number of bins GroupNames = ['Group1', 'Group2', 'Group3', ...] df['binned_attribute_name'] = pd.cut(df['attribute_name'], bins, labels=GroupNames, include_lowest=True)``` |
 | **Change column name**                         | Rename a column.                                                        | ```df.rename(columns={'old_name': 'new_name'}, inplace=True)```                                                                                                                                                                                                   |
 | **Indicator variables**                        | Convert categorical attributes into one-hot encoded variables.          | ```dummy_variable = pd.get_dummies(df['attribute_name']) df = pd.concat([df, dummy_variable], axis=1)```                                                                                                                                                          |
-
 
 | Title                             | Description                                              | Command                                                                        |
 |-----------------------------------|----------------------------------------------------------|--------------------------------------------------------------------------------|
@@ -72,37 +78,258 @@ Code for IBM Data Science Professional on Coursera
 | Element-wise addition             | Increase all values in a column                          | `df['col'] = df['col'] + 1`                                                    |
 
 ## Module 3: Exloratory Data Analysis
- Exploratory data analysis or in short, EDA, is an approach to analyze data in order to
- - summarize main characteristics of the data
- - gain better understanding of the data set
- - uncover relationships between different variables
- - extract important variables
-### Descriptive statistics
- Descriptive statistical analysis helps to describe basic features of a dataset and obtains a short summary about the sample and measures of the data.
- - `df.describe()` Using the describe function and applying it on your data frame, a describe function automatically computes basic statistics for all numerical variables. 
-It shows the mean, the total number of data points, the standard deviation, the quartiles, and the extreme values. Any NaN values are automatically skipped in these statistics
- - `df['col'].value_counts()` The value_counts function takes a Series as input and returns a Series containing counts of unique values.
- - `df['col'].value_counts().to_frame()` saves it to a new DataFrame.
- - `df.boxplot(column='col1', by='col2')` A boxplot is a method for graphically depicting groups of numerical data through their quartiles.
-### GroupBy and Pivot Tables
- - `df['drive-wheels'].unique()` returns an array of unique values in a column.
- - `df.groupby(['col1', 'col2'], as_index=False).mean()` The groupby function groups rows of a DataFrame based on some criteria.
- - `df.pivot(index='col1', columns='col2', values='col3')` The pivot_table function creates a spreadsheet-like table of a DataFrame.
-### Seaborn functions
- - `sns.regplot(x = 'header_1',y = 'header_2',data= df)` A regression plot draws a scatter plot of two variables, x and y, and then fits the regression model and plots the resulting regression line along with a 95% confidence interval for that regression. The x and y parameters can be shared as the dataframe headers to be used, and the data frame itself is passed to the function as well.
- - 
-### Pearson Correlation Coefficient
-`pearson_coef, p_value = stats.pearsonr(df['col1'], df['col2'])` The Pearson Correlation measures the linear dependence between two variables X and Y and will give you two values; the correlation coefficient and the p-value.
-- The coefficient is a value between -1 and 1 inclusive, where:
-  - 1: Perfect positive linear correlation. 
-  - 0: No linear correlation, the two variables most likely do not affect each other. 
-  - -1: Perfect negative linear correlation.
-- The P-value is the probability value that the correlation between these two variables is statistically significant. Normally, we choose a significance level of 0.05, which means that we are 95% confident that the correlation between the variables is significant. 
-  - p-value < 0.001 strong certainty about the correlation coefficient that we calculated
-  - p-value < 0.05 moderate certainty
-  - p-value < 0.1 weak certainty
-  - p-value > 0.1 no certainty of correlation at all
 
-*Strong correlation when*
+Exploratory data analysis or in short, EDA, is an approach to analyze data in order to
+
+- summarize main characteristics of the data
+- gain better understanding of the data set
+- uncover relationships between different variables
+- extract important variables
+
+### Descriptive statistics
+
+Descriptive statistical analysis helps to describe basic features of a dataset and obtains a short summary about the
+sample and measures of the data.
+
+- `df.describe()` Using the describe function and applying it on your data frame, a describe function automatically
+  computes basic statistics for all numerical variables.
+  It shows the mean, the total number of data points, the standard deviation, the quartiles, and the extreme values. Any
+  NaN values are automatically skipped in these statistics
+- `df['col'].value_counts()` The value_counts function takes a Series as input and returns a Series containing counts of
+  unique values.
+- `df['col'].value_counts().to_frame()` saves it to a new DataFrame.
+- `df.boxplot(column='col1', by='col2')` A boxplot is a method for graphically depicting groups of numerical data
+  through their quartiles.
+
+### GroupBy and Pivot Tables
+
+- `df['drive-wheels'].unique()` returns an array of unique values in a column.
+- `df.groupby(['col1', 'col2'], as_index=False).mean()` The groupby function groups rows of a DataFrame based on some
+  criteria.
+- `df.pivot(index='col1', columns='col2', values='col3')` The pivot_table function creates a spreadsheet-like table of a
+  DataFrame.
+
+### Seaborn functions
+
+- `sns.regplot(x = 'header_1',y = 'header_2',data= df)` A regression plot draws a scatter plot of two variables, x and
+  y, and then fits the regression model and plots the resulting regression line along with a 95% confidence interval for
+  that regression. The x and y parameters can be shared as the dataframe headers to be used, and the data frame itself
+  is passed to the function as well.
+-
+
+### Pearson Correlation Coefficient
+
+The Pearson Correlation measures the linear dependence between two variables X and Y and will give you two values; the
+correlation coefficient and the p-value
+
+```python
+from scipy import stats
+
+pearson_coef, p_value = stats.pearsonr(df['col1'], df['col2'])
+``` 
+
+- The coefficient is a value between -1 and 1 inclusive, where:
+    - 1: Perfect positive linear correlation.
+    - 0: No linear correlation, the two variables most likely do not affect each other.
+    - -1: Perfect negative linear correlation.
+- The P-value is the probability value that the correlation between these two variables is statistically significant.
+  Normally, we choose a significance level of 0.05, which means that we are 95% confident that the correlation between
+  the variables is significant.
+    - p-value < 0.001 strong certainty about the correlation coefficient that we calculated
+    - p-value < 0.05 moderate certainty
+    - p-value < 0.1 weak certainty
+    - p-value > 0.1 no certainty of correlation at all
+
+**Strong correlation when**
+
 - Correlation coefficient is close to +1 or -1
 - P-value is less than 0.001
+
+# Module 4: Model Development
+
+Process of training or **fit** a model to **predict** a *target* variable based on one or more *predictor* variables.
+The output of the training are the model parameters that describe the relationship between the predictor variables and
+the target variable.
+
+## Linear Regression (SLR and MLR)
+
+Use a linear model to explain the relationship between one continuous target y and one or more predictor variables x.
+
+**Simple linear regression** refers to using one independent variable and **multiple linear regression** uses multiple
+independent variables
+
+```
+y = b_0 + b_1 * x
+
+y = b_0 + b_1 * x + b_2 * x_2 + ... + b_n * x_n
+```
+
+Where we have variables
+
+- **predictor** (independent) variables: `X = [x_1, x_2, ..., x_n]`
+- **target** (dependent) variable: `y`
+
+and parameters
+
+- **intercept**: `b_0`
+- **slope coefficients** of the regression: `b_1, b_2, ..., b_n`
+
+In code, we can use the `sklearn.linear_model.LinearRegression` class:
+
+```python
+from sklearn.linear_model import LinearRegression
+
+lm = LinearRegression()  # create model using constructor
+lm.fit(X, y)
+Yhat = lm.predict(X)
+```
+
+We use `lm.intercept_` and `lm.coef_` to get the intercept `b_0` and slope `b_1` of the regression line.
+
+## Model Evaluation using Visualization
+
+### Regression Plot
+
+Creates a scatterplot with an optional **linear regression line**. Useful for visualizing the relationship between two
+numeric variables and spotting trends.
+
+- Plots data points
+- Adds a best-fit linear regression line
+- Can show confidence intervals
+- Works well for quick correlation inspection
+
+```python
+sns.regplot(x="horsepower", y="price", data=df)
+```
+
+### Residual Plot
+
+Plots residuals from a **linear regression model**. Useful for checking model assumptions like linearity and
+homoscedasticity. It shows differences between observed and predicted values and helps detect non-linear patterns or
+heteroscedasticity
+
+```python
+sns.residplot(x="horsepower", y="price", data=df)
+```
+
+If the points in a residual plot are randomly spread out around the x-axis, then a linear model is appropriate for the
+data. If these conditions are not met (e.g. residuals depend on x), consider using a different model.
+
+### Distribution Plot with Kernel Density Estimation (KDE)
+Kernel Density Estimation (KDE) plots are a valuable tool for visualizing data distributions by estimating their probability density function (PDF). These plots are particularly useful in regression analysis for comparing actual and predicted values. With the deprecation of Seaborn distplot, KDE plots serve as a modern and effective method for assessing model performance.
+
+```python
+import seaborn as sns
+plt.figure(figsize=(10,6))
+sns.kdeplot(Y, label='Actual Value', fill=True, color='blue')
+sns.kdeplot(Yhat, label='Predicted Values', fill=True, color='red')
+plt.xlabel('Target')
+plt.ylabel('Density')
+plt.title('Actual vs Predicted Values')
+plt.legend()
+plt.show()
+```
+
+## Polynomial Regression and Pipelines
+
+Polynomial regression is a technique for fitting a nonlinear relationship between a dependent variable and one or more
+independent variables. Which can go from second-order (quadratic) to higher-order (cubic, quartic, etc.) polynomials.
+
+For **one-dimensional polynomial regression** (one independent variable) defined by 
+```python
+Yhat = b0 + b1 * x + b2 * x^2 + ... + bn * x^n
+```
+We can use numpy's polyfit function:
+```python
+X_flat = X.to_numpy().flatten() # polyfit requires 1d array (not pd.Series)
+f = np.polyfit(X_flat, Y, 2) # fit a polynomial of degree 2 -> find coefficients a, b and c of ax^2 + bx + c
+p = np.poly1d(f) # convert coefficients into a polynomial object that can be used to predict values
+Yhat = p(X_flat)
+```
+
+### Multidimensional polynomial regression
+
+The polyfit function cannot handle multidimensional data. We use the preprocessing library in scikit-learn to create a
+polynomial feature object.
+The constructor takes the degree of the polynomial as a parameter. Then we transform the features into a polynomial
+feature with the fit_transform method.
+
+```python
+from sklearn.preprocessing import PolynomialFeatures
+
+pr = PolynomialFeatures(degree=2, include_bias=False)
+X_poly = pr.fit_transform(X)
+```
+
+### Preprocessing
+
+We can use the preprocessing module to simplify many tasks. For example, we can standardize each feature simultaneously.
+We import standard scalar. We train the object, fit the scale object, then transform the data into a new data frame on
+array x_scale.
+
+```python
+from sklearn.preprocessing import StandardScaler
+
+scaler = StandardScaler()
+scaler.fit(X_poly)
+X_scale = scaler.transform(X_poly)
+```
+
+There are more normalization methods available in the preprocessing library as well as other transformations.
+
+### Pipelines
+
+There are many steps to getting a prediction. For example, polynomial transform, normalization, and linear regression.
+We can simplify the process using a pipeline, which sequentially perform a series of transformations and a prediction
+as the last step.
+
+```python
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.linear_model import LinearRegression
+from sklearn.preprocessing import StandardScaler
+from sklearn.pipeline import Pipeline
+
+X = X.astype(float) # convert to float to avoid errors
+input = [('polynomial', PolynomialFeatures(degree=2)), ('scale', StandardScaler()), ('model', LinearRegression())]
+pipeline = Pipeline(input)  # give input to pipeline constructor to create a pipeline object
+pipeline.fit(X, y)  # train pipeline object a.k.a. fit the model to the data
+yhat = pipeline.predict(X)  # use pipeline object to make predictions
+```
+
+### Measures for In-Sample Evaluation
+
+**Mean Squared Error (MSE)** is a common measure of the regression model quality. It is defined as the average of
+the squared residuals (errors). However, there a few things to note:
+
+- A lower MSE does not always imply a better fitted model.
+- MSE for an MLR model will be smaller than MSE for a SLR model, since the errors decrease with an increasing number of
+  variables in the model
+- Polynomial regression models have smaller MSE than linear regression models
+
+```python
+from sklearn.metrics import mean_squared_error
+
+mean_squared_error(y_true, y_pred)
+```
+
+**R-squared (R^2)** also called coefficient of determination. It is a statistical measure of how close the data are to
+the fitted regression line by dividing the MSE of regression line by the MSE of data average
+`R_squared = 1 - (mean_squared_error(y_true, y_pred) / mean_squared_error(y_true, y_true.mean()))`
+R-squared values range normally from 0 to 1, with
+
+- 1 being the best possible prediction
+- close to 0, the model does not fit the data well
+- < 0 can be due to overfitting the model
+
+```python
+lm.score(X, y)  # Evaluate the model lm using the default scoring metric (R^2)
+```
+
+### Prediction and Decision-making
+
+To determine whether a model is correct or not, you should always
+
+- check if predicted values make sense
+- visualize with regression plot, residual plot, distribution plot, MSE, and R-squared
+- evaluate with numerical measures
+- compare between different models
