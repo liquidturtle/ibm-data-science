@@ -1,5 +1,3 @@
-from sklearn.metrics import mean_squared_error
-
 # ibm-data-science
 
 Code for IBM Data Science Professional on Coursera
@@ -188,6 +186,24 @@ We use `lm.intercept_` and `lm.coef_` to get the intercept `b_0` and slope `b_1`
 
 ## Model Evaluation using Visualization
 
+### Boxplot
+
+The boxplot shows the distribution of data points
+
+```python
+df.boxplot(column='col1', by='col2')  # pandas version
+sns.boxplot(df[['col1', 'col2']], x='col1', y='col2')  # seaborn version
+```
+
+- Median (Q2 / 50th Percentile): The horizontal line inside the box. It represents the middle value of the dataset.
+- First Quartile (Q1 / 25th Percentile): The bottom edge of the box. 25% of the data falls below this value.
+- Third Quartile (Q3 / 75th Percentile): The top edge of the box. 75% of the data falls below this value.
+- Interquartile Range (IQR): The height of the box (Q3 - Q1). This represents the middle 50% of your data.
+- Whiskers: The vertical lines extending from the box. They typically extend to 1.5 \times IQR from the edges of the
+  box. They show the range of the data excluding outliers.
+- Outliers: Any data points that fall outside the whiskers are plotted individually as dots or diamonds. These are
+  considered outliers (extreme values).
+
 ### Regression Plot
 
 Creates a scatterplot with an optional **linear regression line**. Useful for visualizing the relationship between two
@@ -216,11 +232,16 @@ If the points in a residual plot are randomly spread out around the x-axis, then
 data. If these conditions are not met (e.g. residuals depend on x), consider using a different model.
 
 ### Distribution Plot with Kernel Density Estimation (KDE)
-Kernel Density Estimation (KDE) plots are a valuable tool for visualizing data distributions by estimating their probability density function (PDF). These plots are particularly useful in regression analysis for comparing actual and predicted values. With the deprecation of Seaborn distplot, KDE plots serve as a modern and effective method for assessing model performance.
+
+Kernel Density Estimation (KDE) plots are a valuable tool for visualizing data distributions by estimating their
+probability density function (PDF). These plots are particularly useful in regression analysis for comparing actual and
+predicted values. With the deprecation of Seaborn distplot, KDE plots serve as a modern and effective method for
+assessing model performance.
 
 ```python
 import seaborn as sns
-plt.figure(figsize=(10,6))
+
+plt.figure(figsize=(10, 6))
 sns.kdeplot(Y, label='Actual Value', fill=True, color='blue')
 sns.kdeplot(Yhat, label='Predicted Values', fill=True, color='red')
 plt.xlabel('Target')
@@ -235,30 +256,33 @@ plt.show()
 Polynomial regression is a technique for fitting a nonlinear relationship between a dependent variable and one or more
 independent variables. Which can go from second-order (quadratic) to higher-order (cubic, quartic, etc.) polynomials.
 
-For **one-dimensional polynomial regression** (one independent variable) defined by 
+For **one-dimensional polynomial regression** (one independent variable) defined by
+
 ```python
-Yhat = b0 + b1 * x + b2 * x^2 + ... + bn * x^n
+Yhat = b0 + b1 * x + b2 * x ^ 2 + ... + bn * x ^ n
 ```
+
 We can use numpy's polyfit function:
+
 ```python
-X_flat = X.to_numpy().flatten() # polyfit requires 1d array (not pd.Series)
-f = np.polyfit(X_flat, Y, 2) # fit a polynomial of degree 2 -> find coefficients a, b and c of ax^2 + bx + c
-p = np.poly1d(f) # convert coefficients into a polynomial object that can be used to predict values
+X_flat = X.to_numpy().flatten()  # polyfit requires 1d array (not pd.Series)
+f = np.polyfit(X_flat, Y, 2)  # fit a polynomial of degree 2 -> find coefficients a, b and c of ax^2 + bx + c
+p = np.poly1d(f)  # convert coefficients into a polynomial object that can be used to predict values
 Yhat = p(X_flat)
 ```
 
 ### Multidimensional polynomial regression
 
-The polyfit function cannot handle multidimensional data. We use the preprocessing library in scikit-learn to create a
-polynomial feature object.
-The constructor takes the degree of the polynomial as a parameter. Then we transform the features into a polynomial
-feature with the fit_transform method.
+For 1-D input features, using the numpy `polyfit` function is equivalent to using scikit-learn `PolynomialFeatures` plus
+`LinearRegression`. However, the polyfit function cannot handle multidimensional data. We use the preprocessing library
+in scikit-learn to create a polynomial feature object. The constructor takes the degree of the polynomial as a
+parameter. Then we transform the features into a polynomial feature with the fit_transform method.
 
 ```python
 from sklearn.preprocessing import PolynomialFeatures
 
 pr = PolynomialFeatures(degree=2, include_bias=False)
-X_poly = pr.fit_transform(X)
+X_poly = pr.fit_transform(X)  # learn the polynomial features from the data and return feature matrix 
 ```
 
 ### Preprocessing
@@ -289,7 +313,7 @@ from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import Pipeline
 
-X = X.astype(float) # convert to float to avoid errors
+X = X.astype(float)  # convert to float to avoid errors
 input = [('polynomial', PolynomialFeatures(degree=2)), ('scale', StandardScaler()), ('model', LinearRegression())]
 pipeline = Pipeline(input)  # give input to pipeline constructor to create a pipeline object
 pipeline.fit(X, y)  # train pipeline object a.k.a. fit the model to the data
@@ -333,3 +357,121 @@ To determine whether a model is correct or not, you should always
 - visualize with regression plot, residual plot, distribution plot, MSE, and R-squared
 - evaluate with numerical measures
 - compare between different models
+
+# Module 5: Model Evaluation and Refinement
+
+## Out-of-Sample Evaluation and Cross-Validation
+
+**In-sample evaluation** (as done in the previous module) tells us how well our model fits the data already given to
+train it but not how well the trained model can predict new data. The solution is to **test-train-split** the data, use
+the in-sample data or **training data** to train the model. The rest of the data, called **test data**, is used as
+out-of-sample
+data. This data is then used to approximate how the model performs in the real world.
+
+```python
+from sklearn.model_selection import train_test_split
+
+x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=1)
+```
+
+where `test_size` is the proportion of the dataset to include in the test split and `random_state` is the seed for
+random data splitting.
+
+TODO **Generalization Error**
+
+To overcome the generalization error, we can use **cross-validation**, which is a technique for evaluating a
+model by splitting the original dataset into smaller subsets called **folds**. The model is trained on k-1 folds and
+tested on the remaining fold. The process is repeated k times, with each iteration using a different fold as the test
+set. The average performance of the k models is then calculated as the cross-validation error. In python we use the *
+*cross_val_score** function:
+
+```python
+from sklearn.model_selection import cross_val_score
+
+rcross_scores = cross_val_score(model, X, y, cv=3)  # fit model three times, on different partitions of the data
+cv_score = rcross_scores.mean()
+cv_std_dev = rcross_scores.std()
+```
+
+- `model`: type of model (already initialized) for the cross validation.
+- `X`: the predictor variable data
+- `y`: the target variable data
+- `cv`: Number of folds. cv=3 means the data set is split into three equal partitions.
+
+The function returns an array of scores, one for each partition that was chosen as the testing set. We can average the
+result together to estimate out-of-sample R^2 using the mean function in NumPy.
+
+```python
+from sklearn.model_selection import cross_val_predict
+
+yhat = cross_val_predict(model, X, y, cv=3)
+```
+
+If we want to get the predictions for each fold, we can use the **cross_val_predict** function. Inputs are exactly the
+same as for cross_val_score, except that it returns an array of predictions instead of an array of scores. With cv=3, it
+fits 3 separate models (one per fold), each on 66% of the data, then predicts on the remaining 33%. Yhat is then made by
+stitching together those held-out predictions.
+
+## Overfitting, Underfitting, and Model Selection
+
+- **Underfitting**: The model is not complex enough to capture the true relationship between the features and the
+  target.
+- **Overfitting**: The model is too flexible and fits the noise rather than the underlying pattern.
+
+To select the right degree of complexity for a model, we need to evaluate the model on both in-sample (**training error
+**) and out-of-sample (**test error**) data. Training error usually decreases with increasing model complexity. Test
+error usually first decreases and then increases again with increasing model complexity. We pick the complexity that
+minimizes the test error.
+
+## Ridge Regression
+
+For models with multiple independent features and ones with polynomial feature extrapolation, it is common to have
+collinear combinations of features. Left unchecked, this multicollinearity of features can lead the model to overfit the
+training data. To control this, the feature sets are typically regularized using hyperparameters.
+
+**Ridge regression** is the process of regularizing the feature set using the hyperparameter `alpha`. It can be utilized
+to regularize and reduce standard errors and avoid over-fitting while using a regression model.
+
+```python
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.linear_model import Ridge
+
+pr = PolynomialFeatures(degree=2)
+x_train_pr = pr.fit_transform(X_train[['attribute_1', 'attribute_2', ...]])
+X_test_pr = pr.fit_transform(x_test[['attribute_1', 'attribute_2', ...]])
+
+ridgemodel = Ridge(alpha=1)  # create ridge regression object
+ridgemodel.fit(X_train_pr, y_train)
+yhat = ridgemodel.predict(X_test_pr)
+```
+
+Alpha can be set to any value between 0 and infinity. A higher alpha value results in a more regularized model. The
+right value of alpha is when the test error R-squared is minimal (i.e., sweet spot between enough model complexity but
+no
+overfitting). A common technique to determine alpha is by applying **grid search**.
+
+## Grid Search
+
+Grid search is a technique for finding the optimal hyperparameters of a model. It involves iterating over a grid of
+values for each hyperparameter and selecting the combination that yields the best performance.
+
+```python
+from sklearn.linear_model import Ridge
+from sklearn.model_selection import GridSearchCV
+
+parameters = {'alpha': [1e-15, 1e-10, 1e-8, 1e-3, 1, 5, 10, 20, 30, 100]}
+ridgemodel = Ridge()
+grid_search = GridSearchCV(ridgemodel, parameters, cv=5)  # configure grid search object with 5-fold cross-validation
+grid_search.fit(X_train, y_train)
+
+best_model = grid_search.best_estimator_  # best model instance found by grid search
+scores = grid_search.cv_results_  # dictionary of results for all iterations
+```
+
+The `grid_search.fit` runs cross-validation for every `alpha` in `parameters`:
+
+- split training data into k folds, train on k-1 folds, validate on the remaining fold
+- repeat so each fold is used as validation once and average the validation scores
+
+The `grid_search.best_estimator_` attribute returns the model with the best cross-validation score.
+By default, the score is R² unless you pass `scoring=`.
