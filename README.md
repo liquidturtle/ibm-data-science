@@ -4,35 +4,6 @@ Code for IBM Data Science Professional on Coursera
 
 ## Module 2: Data Wrangling
 
-### Import / Export
-
-| Title                             | Description                            | Command                                                                       |
-|-----------------------------------|----------------------------------------|-------------------------------------------------------------------------------|
-| Read CSV w/o header               | Read CSV file into a DataFrame         | `df = pd.read_csv("file.csv")` or `df = pd.read_csv("file.csv", header=None)` |
-| Read CSV with custom column names | Provide your own column names          | `df = pd.read_csv("file.csv", names=cols_list)`                               |
-| Read Excel                        | Read Excel sheet into a DataFrame      | `df = pd.read_excel("file.xlsx", sheet_name="Sheet1")`                        |
-| Read JSON                         | Read JSON file or URL into a DataFrame | `df = pd.read_json("file.json")`                                              |
-| Read from SQL                     | Read from SQL database using a query   | `df = pd.read_sql("SELECT * FROM table", conn)`                               |
-| Save to CSV                       | Save DataFrame to a CSV file           | `df.to_csv("output.csv", index=False)`                                        |
-| Save to Excel                     | Save DataFrame to an Excel file        | `df.to_excel("output.xlsx", index=False)`                                     |
-| Save to SQL                       | Write DataFrame to SQL table           | `df.to_sql("table_name", conn, if_exists="replace", index=False)`             |
-
-### View / Inspect
-
-| Title                | Description                             | Command                      |
-|----------------------|-----------------------------------------|------------------------------|
-| View first rows      | Show first *n* rows (default 5)         | `df.head(n)`                 |
-| View last rows       | Show last *n* rows (default 5)          | `df.tail(n)`                 |
-| Random sample        | Random sample of rows                   | `df.sample(n=5)`             |
-| Shape                | Number of rows and columns              | `df.shape`                   |
-| Column names         | List all column labels                  | `df.columns`                 |
-| Data types           | Data types of each column               | `df.dtypes`                  |
-| Basic info           | Summary: index, dtypes, non-null counts | `df.info()`                  |
-| Describe numeric     | Summary stats for numeric columns       | `df.describe()`              |
-| Describe all         | Summary stats for all columns           | `df.describe(include="all")` |
-| Count missing values | Missing values per column               | `df.isna().sum()`            |
-| Value counts         | Frequency of values in a column         | `df["col"].value_counts()`   |
-| Unique values        | Unique values in a column               | `df["col"].unique()`         |
 
 ### Data Wrangling
 
@@ -48,32 +19,10 @@ Code for IBM Data Science Professional on Coursera
 
 | Title                             | Description                                              | Command                                                                        |
 |-----------------------------------|----------------------------------------------------------|--------------------------------------------------------------------------------|
-| Select column                     | Select a single column as Series                         | `df["col"]`                                                                    |
-| Select multiple columns           | Select several columns                                   | `df[["col1", "col2"]]`                                                         |
-| Filter rows (condition)           | Filter rows matching condition                           | `df[df["col"] > 0]`                                                            |
-| Filter with multiple conditions   | Combine conditions with `&` / `\|`                       | `df[(df["col1"] > 0) & (df["col2"] == "A")]`                                   |
-| Reset index                       | Reset index to default                                   | `df.reset_index(drop=True, inplace=True)`                                      |
-| Sort values                       | Sort by one or more columns                              | `df.sort_values(["col1", "col2"], ascending=[True, False])`                    |
-| Rename columns                    | Rename one or more columns                               | `df.rename(columns={"old": "new"}, inplace=True)`                              |
-| Drop columns                      | Remove columns                                           | `df.drop(columns=["col1", "col2"], inplace=True)`                              |
-| Drop rows with NaN                | Drop rows with missing values                            | `df.dropna(subset=["col"], inplace=True)`                                      |
-| Fill missing values               | Replace NaN with a statistic/value                       | `df["col"].fillna(df["col"].mean(), inplace=True)`                             |
-| Replace values                    | Replace specific values                                  | `df["col"].replace({0: np.nan}, inplace=True)`                                 |
-| Change type                       | Convert column to another dtype                          | `df["col"] = df["col"].astype(float)`                                          |
-| Create new column                 | Compute new column from others                           | `df["new"] = df["a"] + df["b"]`                                                |
 | Apply function                    | Apply custom function to column                          | `df["col"].apply(my_func)`                                                     |
-| Group by                          | Group and aggregate                                      | `df.groupby("col")["value"].mean()`                                            |
-| Multiple aggregations             | Apply several aggregations                               | `df.groupby("col")["value"].agg(["mean","sum","count"])`                       |
-| Pivot table                       | Create pivot table                                       | `pd.pivot_table(df, values="val", index="row", columns="col", aggfunc="mean")` |
-| Concatenate                       | Stack DataFrames vertically or horizontally              | `pd.concat([df1, df2], axis=0)`                                                |
-| Merge / join                      | SQL-style join                                           | `pd.merge(df1, df2, on="key", how="inner")`                                    |
 | Min-max scaling                   | Normalize features to range 0–1                          | `df_scaled = (df - df.min()) / (df.max() - df.min())`                          |
 | Z-score scaling                   | Normalize using mean and std deviation                   | `df_scaled = (df - df.mean()) / df.std()`                                      |
 | Simple feature scaling            | Scale features by dividing by std (same as z-score here) | `df_scaled = df / df.max()`                                                    |
-| Replace '?' with NaN              | Convert missing value placeholders to actual NaN         | `df = df.replace("?", np.nan)`                                                 |
-| Fill missing values with mean     | Replace NaN values using column mean                     | `df = df.fillna(df.mean())`                                                    |
-| Fill missing col values with mean | Replace NaN values using column mean                     | `df["col"] = df["col"].fillna(df["col"].mean())`                               |
-| Element-wise addition             | Increase all values in a column                          | `df['col'] = df['col'] + 1`                                                    |
 
 ## Module 3: Exloratory Data Analysis
 
@@ -86,22 +35,11 @@ Exploratory data analysis or in short, EDA, is an approach to analyze data in or
 
 ### Descriptive statistics
 
-Descriptive statistical analysis helps to describe basic features of a dataset and obtains a short summary about the
-sample and measures of the data.
-
-- `df.describe()` Using the describe function and applying it on your data frame, a describe function automatically
-  computes basic statistics for all numerical variables.
-  It shows the mean, the total number of data points, the standard deviation, the quartiles, and the extreme values. Any
-  NaN values are automatically skipped in these statistics
-- `df['col'].value_counts()` The value_counts function takes a Series as input and returns a Series containing counts of
-  unique values.
-- `df['col'].value_counts().to_frame()` saves it to a new DataFrame.
 - `df.boxplot(column='col1', by='col2')` A boxplot is a method for graphically depicting groups of numerical data
   through their quartiles.
 
 ### GroupBy and Pivot Tables
 
-- `df['drive-wheels'].unique()` returns an array of unique values in a column.
 - `df.groupby(['col1', 'col2'], as_index=False).mean()` The groupby function groups rows of a DataFrame based on some
   criteria.
 - `df.pivot(index='col1', columns='col2', values='col3')` The pivot_table function creates a spreadsheet-like table of a

@@ -30,7 +30,7 @@ modeling.
 Load data from common formats into a Pandas DataFrame:
 
 ```python
-pd.read_csv("file.csv")
+pd.read_csv("file.csv", names=cols_list) # Provide your own column names
 pd.read_excel("file.xlsx", sheet_name="Sheet1")
 pd.read_json("file.json")
 pd.read_sql("SELECT * FROM table", conn)
@@ -60,13 +60,16 @@ df.to_sql("table", conn, if_exists="replace", index=False)
 Understanding structure and quality of the data:
 
 ```python
-df.head()
-df.tail()
-df.shape
-df.columns
-df.dtypes
-df.info()
-df.describe(include="all")  # include categorical columns
+df.head() # Show first n rows (default 5)
+df.tail() # Show last n rows (default 5)
+df.shape # (rows, columns)
+df.columns # List column names
+df.dtypes # List column data types (bool, int64, float64, object, datetime64[ns])
+df.info() # Summary: index, dtypes, non-null counts
+df.describe(include="all")  # Show mean, number of data points, standard deviation, quartiles, and extreme values
+df.isnull().sum() # Count missing values per column
+df['col'].value_counts() # returns pd.series with count of unique values
+df['col'].unique() # return np.array with unique values
 ```
 
 Common checks:
@@ -84,7 +87,8 @@ Replace placeholders and handle missing values:
 ```python
 df.replace("?", np.nan, inplace=True)
 df["col"].fillna(df["col"].mean(), inplace=True)
-df.dropna(subset=["col"], inplace=True)
+df.drop(columns=["col1", "col2"], inplace=True) # Drop specified columns
+df.dropna(subset=["col"], inplace=True) # Drop rows with missing values
 ```
 
 Strategies:
@@ -100,12 +104,11 @@ Correct data types are critical for analysis and modeling:
 ```python
 df["col"] = df["col"].astype(float)
 df.rename(columns={"old": "new"}, inplace=True)
+df.sort_values(["col1", "col2"], ascending=[True, False]) # Sort by multiple columns
+df.reset_index(drop=True, inplace=True) # Reset index
 ```
 
-Panda data types:
-
-- float64, int64, bool
-- object, datetime64[ns], timedelta64[ns]
+Panda data types are _float64, int64, bool, object, datetime64[ns], timedelta64[ns]_
 
 ---
 
@@ -190,7 +193,7 @@ pd.pivot_table(
 #### Merge & Concatenate
 ```python
 pd.merge(df1, df2, on="key", how="inner") # Performs SQL-style joins between two DataFrames using a key column.
-pd.concat([df1, df2])
+pd.concat([df1, df2], axis=1) # Stack two Dataframes vertically (axis=0) or horizontally (axis=1).
 ```
 
 ---
